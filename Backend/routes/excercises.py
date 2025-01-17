@@ -1,33 +1,37 @@
 from flask import Blueprint, jsonify, request
+from models.exercises import Exercise
+from app import db
 
 excercises_bp = Blueprint('exercises', __name__)
 
-# In-memory database for items
-data = {
-    1: {"name": "Item 1", "description": "This is the first item."},
-    2: {"name": "Item 2", "description": "This is the second item."}
-}
-
-# Get all items
+# Get all exercises
 @excercises_bp.route('/exercises', methods=['GET'])
-def get_items():
-    return jsonify(data), 200
+def get_exercises():
+    exercises = Exercise.query.all()  # Fetch all exercises
+    return jsonify([{
+        "id": e.id,
+        "name": e.name,
+        "type": e.type,
+        "duration": e.duration,
+        "max_heart_rate": e.max_heart_rate,
+        "reps": e.reps,
+        "weight": e.weight
+    } for e in exercises]), 200
 
-# Get a single item
-@excercises_bp.route('/exercises/<int:item_id>', methods=['GET'])
-def get_item(item_id):
-    
-    item = data.get(item_id)
-    if item:
-        return jsonify(item), 200
-    return jsonify({"error": "Item not found"}), 404
-
-# Create a new item
+# Create a new exercise
 @excercises_bp.route('/exercises', methods=['POST'])
-def create_item():
-    new_id = max(data.keys()) + 1 if data else 1
-    new_item = request.json
-    if not new_item.get('name') or not new_item.get('description'):
+def create_exercise():
+    data = request.json
+    if not data.get('name') or not data.get('type'):
         return jsonify({"error": "Invalid input"}), 400
-    data[new_id] = new_item
-    return jsonify({"id": new_id, "item": new_item}), 201
+    new_exercise = Exercise(
+        name=data['name'],
+        type=data['type'],
+        duration=data.get('duration'),
+        max_heart_rate=data.get('max_heart_rate'),
+        reps=data.get('reps'),
+        weight=data.get('weight')
+    )
+    db.session.add(new_exercise)
+    db.session.commit()
+    return jsonify({"id": new_exercise.id, "message": "Exercise added successfully"}), 201
