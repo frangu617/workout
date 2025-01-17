@@ -59,3 +59,18 @@ def create_exercise():
     db.session.commit()
     return jsonify({"id": new_exercise.id, "message": "Exercise created successfully"}), 201
 
+@excercises_bp.route("/exercises/<int:exercise_id>", methods=["DELETE"])
+def delete_exercise(exercise_id):
+    # Query the exercise by ID
+    exercise = Exercise.query.get(exercise_id)
+
+    # If the exercise does not exist, return an error response
+    if not exercise:
+        return jsonify({"error": f"Exercise with ID {exercise_id} not found"}), 404
+
+    # Delete the exercise from the database
+    db.session.delete(exercise)
+    db.session.commit()
+
+    # Return a success response
+    return jsonify({"message": f"Exercise with ID {exercise_id} deleted successfully"}), 200

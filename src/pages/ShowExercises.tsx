@@ -34,9 +34,40 @@ export default function ShowExercises() {
       }
     }
     fetchData();
-  }, [fullUrl]); // Dependency array ensures fetchData runs only when `fullUrl` changes
+  }, [fullUrl]);
 
-  // Render loading, error, or exercises
+  // Handle delete request
+  async function handleDelete(id) {
+    try {
+      const res = await fetch(`${fullUrl}${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to delete exercise with ID ${id}`);
+      }
+      // Remove the deleted exercise from the state
+      setExercises((prevExercises) =>
+        prevExercises.filter((exercise) => exercise.id !== id)
+      );
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+    }
+  }
+
+  // Group exercises by date
+  const groupedExercises = exercises.reduce((acc, exercise) => {
+    const dateKey = new Date(exercise.date).toLocaleDateString(); // Format date as string
+    if (!acc[dateKey]) {
+      acc[dateKey] = []; // Initialize array for this date
+    }
+    acc[dateKey].push(exercise); // Add exercise to the corresponding date group
+    return acc;
+  }, {});
+
+  // Render loading, error, or grouped exercises
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -48,35 +79,44 @@ export default function ShowExercises() {
   return (
     <div className="showExercises">
       <h2>Exercises</h2>
-      {exercises.length === 0 ? (
+      {Object.keys(groupedExercises).length === 0 ? (
         <p>No exercises found.</p>
       ) : (
-        <ul>
-          {exercises.map((exercise) => (
-            <li key={exercise.id}>
-              <strong>{exercise.name}</strong>
-              <p>Exercise Type: {exercise.type}</p>
+        Object.entries(groupedExercises).map(([date, exercises]) => (
+          <div key={date}>
+            <h3>{date}</h3> {/* Display the group date */}
+            <ul className="box">
+              {exercises.map((exercise) => (
+                <li key={exercise.id}>
+                  <strong>{exercise.name}</strong>
+                  <p>Exercise Type: {exercise.type}</p>
 
-              {exercise.type === "cardio" ? (
-                <>
-                  {exercise.duration && (
-                    <p>Duration: {exercise.duration} minutes</p>
+                  {exercise.type === "cardio" ? (
+                    <>
+                      {exercise.duration && (
+                        <p>Duration: {exercise.duration} minutes</p>
+                      )}
+                      {exercise.max_heart_rate && (
+                        <p>Max Heart Rate: {exercise.max_heart_rate} bpm</p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {exercise.reps && <p>Reps: {exercise.reps}</p>}
+                      {exercise.weight && <p>Weight: {exercise.weight} lbs</p>}
+                    </>
                   )}
-                  {exercise.max_heart_rate && (
-                    <p>Max Heart Rate: {exercise.max_heart_rate} bpm</p>
-                  )}
-                </>
-              ) : (
-                <>
-                  {exercise.reps && <p>Reps: {exercise.reps}</p>}
-                  {exercise.weight && <p>Weight: {exercise.weight} lbs</p>}
-                </>
-              )}
 
-              <p>Date: {new Date(exercise.date).toLocaleString()}</p>
-            </li>
-          ))}
-        </ul>
+                  <p>Date: {new Date(exercise.date).toLocaleString()}</p>
+                  {/* Delete Button */}
+                  <button onClick={() => handleDelete(exercise.id)}>
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
       )}
     </div>
   );

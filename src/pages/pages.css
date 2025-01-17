@@ -1,18 +1,54 @@
-.showExercises li {
-    list-style: none;
-    text-align: start;
-    border-radius: 8px;
-    border: 2px solid black;
-    margin: 20px; 
-    padding: 0.6em 1.2em;
+.showExercises {
     display: flex;
     flex-direction: column;
-    width: 300px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 3);
+    /* Flexbox for overall container alignment */
+    justify-content: center;
+    /* Center grid horizontally */
+    align-items: center;
+    /* Align items at the top */
+    padding: 20px;
 }
 
-.showExercises ul { 
+.showExercises ul {
     display: grid;
-    flex-direction: row;
-    border-radius: 1px solid black;
+    /* Switch to grid layout */
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 items per row */
+    gap: 20px;
+    /* Space between grid items */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0 auto;
+    /* Center the grid container */
+    list-style: none;
+    /* Remove default list styling */
+}
+
+.showExercises li {
+    list-style: none;
+    /* Remove bullet points */
+    text-align: start;
+    /* Align text to the left */
+    border-radius: 8px;
+    /* Rounded corners */
+    border: 2px solid black;
+    /* Solid border */
+    padding: 0.6em 1.2em;
+    /* Padding inside the box */
+    display: flex;
+    /* Flexbox for inner content */
+    flex-direction: column;
+    /* Stack content vertically */
+    background-color: white;
+    /* Add background color for visibility */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    /* Add shadow */
+    width: 250px;
+    margin: 20px;
+}
+
+.box{
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: #f9f9f9;
 }
