@@ -7,6 +7,7 @@ import Profile from './pages/profile'
 import NewWorkout from './pages/NewWorkout'
 import OldWorkouts from './pages/oldWorkouts'
 import NewExcercise from './pages/NewExcercise'
+import ShowExercises from './pages/ShowExercises'
 import './App.css'
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
         <Route path="/newWorkout" element={<NewWorkout />} />
         <Route path="/oldWorkouts" element={<OldWorkouts />} />
         <Route path="/newExcercise" element={<NewExcercise />} />
+        <Route path="/showExercises" element={<ShowExercises />} />
       </Routes>
     </>
   );

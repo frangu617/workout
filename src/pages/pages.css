@@ -1,0 +1,18 @@
+.showExercises li {
+    list-style: none;
+    text-align: start;
+    border-radius: 8px;
+    border: 2px solid black;
+    margin: 20px; 
+    padding: 0.6em 1.2em;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 3);
+}
+
+.showExercises ul { 
+    display: grid;
+    flex-direction: row;
+    border-radius: 1px solid black;
+}

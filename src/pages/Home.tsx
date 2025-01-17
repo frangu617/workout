@@ -8,7 +8,7 @@ const Home = () => {
             <p> What do you want to do today?</p>
             <ul className="activities">
                 <li>Start a <Link to="/newWorkout"><button>New Workout</button></Link></li>
-                <li>Check on <Link to="/oldWorkouts"><button>Old Workouts</button></Link></li>
+                <li>Check on <Link to="/showExercises"><button>Old Workouts</button></Link></li>
                 <li>Check your <Link to="/profile"><button>Profile</button></Link></li>
             </ul>
         </>

@@ -6,8 +6,18 @@ from datetime import datetime
 excercises_bp = Blueprint('exercises', __name__)
 
 # Get all exercises
-@excercises_bp.route('/exercises', methods=['GET'])
+@excercises_bp.route('/exercises', methods=['GET', 'OPTIONS'])
+@excercises_bp.route('/exercises/', methods=['GET', 'OPTIONS'])  # Allow GET and OPTIONS
 def get_exercises():
+    if request.method == 'OPTIONS':
+        # Handle preflight request
+        response = jsonify({"message": "CORS preflight handled"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response, 200
+
+    # Handle GET request
     exercises = Exercise.query.all()  # Fetch all exercises
     return jsonify([{
         "id": e.id,
@@ -17,9 +27,8 @@ def get_exercises():
         "max_heart_rate": e.max_heart_rate,
         "reps": e.reps,
         "weight": e.weight,
-        "date":datetime.now(),
+        "date": e.date.strftime('%m-%d-%y %H:%M:%S') if e.date else None,  # Format date properly
     } for e in exercises]), 200
-
 # Create a new exercise
 excercises_bp.route('/exercises', methods=['POST', 'OPTIONS'])
 @excercises_bp.route('/exercises/', methods=['POST', 'OPTIONS'])  # Handles trailing slash
