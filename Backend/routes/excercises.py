@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-excercises_bp = Blueprint('items', __name__)
+excercises_bp = Blueprint('exercises', __name__)
 
 # In-memory database for items
 data = {
@@ -9,20 +9,21 @@ data = {
 }
 
 # Get all items
-@excercises_bp.route('/', methods=['GET'])
+@excercises_bp.route('/exercises', methods=['GET'])
 def get_items():
     return jsonify(data), 200
 
 # Get a single item
-@excercises_bp.route('/<int:item_id>', methods=['GET'])
+@excercises_bp.route('/exercises/<int:item_id>', methods=['GET'])
 def get_item(item_id):
+    
     item = data.get(item_id)
     if item:
         return jsonify(item), 200
     return jsonify({"error": "Item not found"}), 404
 
 # Create a new item
-@excercises_bp.route('/', methods=['POST'])
+@excercises_bp.route('/exercises', methods=['POST'])
 def create_item():
     new_id = max(data.keys()) + 1 if data else 1
     new_item = request.json
