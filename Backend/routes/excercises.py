@@ -9,12 +9,12 @@ data = {
 }
 
 # Get all items
-@items_bp.route('/', methods=['GET'])
+@excercises_bp.route('/', methods=['GET'])
 def get_items():
     return jsonify(data), 200
 
 # Get a single item
-@items_bp.route('/<int:item_id>', methods=['GET'])
+@excercises_bp.route('/<int:item_id>', methods=['GET'])
 def get_item(item_id):
     item = data.get(item_id)
     if item:
@@ -22,7 +22,7 @@ def get_item(item_id):
     return jsonify({"error": "Item not found"}), 404
 
 # Create a new item
-@items_bp.route('/', methods=['POST'])
+@excercises_bp.route('/', methods=['POST'])
 def create_item():
     new_id = max(data.keys()) + 1 if data else 1
     new_item = request.json
