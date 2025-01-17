@@ -1,5 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+from db import db
 from routes.excercises import excercises_bp
 from routes.userStats import users_bp
 
@@ -9,17 +10,17 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the database
-db = SQLAlchemy(app)
+# Enable CORS with specific origin
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
-# Import models
-from models.exercises import Exercise  
-from models.user import User  
+# Initialize the database
+db.init_app(app)
 
 # Register blueprints
 app.register_blueprint(excercises_bp)
 app.register_blueprint(users_bp)
 
+# Create tables
 with app.app_context():
     db.create_all()
 

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models.exercises import Exercise
-from app import db
+from db import db
+from datetime import datetime
 
 excercises_bp = Blueprint('exercises', __name__)
 
@@ -15,23 +16,37 @@ def get_exercises():
         "duration": e.duration,
         "max_heart_rate": e.max_heart_rate,
         "reps": e.reps,
-        "weight": e.weight
+        "weight": e.weight,
+        "date":datetime.now(),
     } for e in exercises]), 200
 
 # Create a new exercise
-@excercises_bp.route('/exercises', methods=['POST'])
+excercises_bp.route('/exercises', methods=['POST', 'OPTIONS'])
+@excercises_bp.route('/exercises/', methods=['POST', 'OPTIONS'])  # Handles trailing slash
 def create_exercise():
+    if request.method == 'OPTIONS':
+        # Preflight request handling
+        response = jsonify({"message": "CORS preflight handled"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response, 200
+
+    # Handle POST request
     data = request.json
-    if not data.get('name') or not data.get('type'):
+    if not data.get("name") or not data.get("type"):
         return jsonify({"error": "Invalid input"}), 400
+
     new_exercise = Exercise(
-        name=data['name'],
-        type=data['type'],
-        duration=data.get('duration'),
-        max_heart_rate=data.get('max_heart_rate'),
-        reps=data.get('reps'),
-        weight=data.get('weight')
+        name=data["name"],
+        type=data["type"],
+        duration=data.get("duration"),
+        max_heart_rate=data.get("max_heart_rate"),
+        reps=data.get("reps"),
+        weight=data.get("weight"),
+        date = datetime.now(),
     )
     db.session.add(new_exercise)
     db.session.commit()
-    return jsonify({"id": new_exercise.id, "message": "Exercise added successfully"}), 201
+    return jsonify({"id": new_exercise.id, "message": "Exercise created successfully"}), 201
+
