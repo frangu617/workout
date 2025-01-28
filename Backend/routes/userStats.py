@@ -26,12 +26,21 @@ def get_user(user_id):
 # Create a new user
 @users_bp.route('/users', methods=['POST'])
 def create_user():
-    new_id = max(users.keys()) + 1 if users else 1
-    new_user = request.json
-    if not new_user.get('username') or not new_user.get('email'):
+    # Handle POST request
+    data = request.json
+    if not data.get("name") or not data.get("type"):
         return jsonify({"error": "Invalid input"}), 400
-    users[new_id] = new_user
-    return jsonify({"id": new_id, "user": new_user}), 201
+
+    new_user = User(
+        name=data["name"],
+        age=data["age"],
+        gender=data["gender"],
+        weight=data["weight"],
+        height=data["height"],
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"id": new_user.id, "message": "User created successfully"}), 201
 
 # Update an existing user
 @users_bp.route('/users/<int:user_id>', methods=['PUT'])
